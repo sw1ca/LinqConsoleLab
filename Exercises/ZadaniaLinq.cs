@@ -47,7 +47,6 @@ public sealed class ZadaniaLinq
     {
         var method = DaneUczelni.Studenci
             .Select(s => $"{s.Email}");
-        
         return method;
     }
 
@@ -63,7 +62,12 @@ public sealed class ZadaniaLinq
     /// </summary>
     public IEnumerable<string> Zadanie03_StudenciPosortowani()
     {
-        throw Niezaimplementowano(nameof(Zadanie03_StudenciPosortowani));
+        var byName = DaneUczelni.Studenci
+            .OrderBy(s => s.Nazwisko)
+            .ThenBy(s => s.Imie)
+            .ToList()
+            .Select(s => $"{s.NumerIndeksu},  {s.Imie}, {s.Nazwisko}");
+        return byName;
     }
 
     /// <summary>
