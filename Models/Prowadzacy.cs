@@ -12,3 +12,4 @@ public sealed class Prowadzacy
 
     public DateTime DataZatrudnienia { get; set; }
 }
+
