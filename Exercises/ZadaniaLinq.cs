@@ -389,7 +389,25 @@ public sealed class ZadaniaLinq
     /// </summary>
     public IEnumerable<string> Wyzwanie03_ProwadzacyISredniaOcenNaIchPrzedmiotach()
     {
-        throw Niezaimplementowano(nameof(Wyzwanie03_ProwadzacyISredniaOcenNaIchPrzedmiotach));
+        return DaneUczelni.Prowadzacy
+            .GroupJoin(DaneUczelni.Przedmioty,
+                pr => pr.Id,
+                p => p.ProwadzacyId,
+                (pr, przedmioty) => new {pr, przedmioty})
+            .SelectMany(
+                prp => prp.przedmioty.DefaultIfEmpty(),
+                (prp, p) => new {prp.pr, p})
+            .GroupJoin(DaneUczelni.Zapisy,
+                prp => prp.p != null ? prp.p.Id : 0,
+                z => z.PrzedmiotId,
+                (prp, zapisy) => new {prp.pr, zapisy})
+            .Select(prz => new
+            {
+                prz.pr.Imie,
+                prz.pr.Nazwisko,
+                SredniaOcena = prz.zapisy.Where(z => z.OcenaKoncowa.HasValue).Average(z => z.OcenaKoncowa.Value)
+            })
+            .Select(p => $"{p.Imie} {p.Nazwisko}, {p.SredniaOcena}");
     }
 
     /// <summary>
